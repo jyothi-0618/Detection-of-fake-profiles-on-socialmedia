@@ -1,0 +1,54 @@
+name: Fake Profile Detection Workflow
+
+on:
+  push:
+    branches:
+      - main  # Trigger when code is pushed to the main branch
+  pull_request:
+    branches:
+      - main  # Trigger when a PR is made to the main branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # Run the workflow on the latest Ubuntu version
+
+    steps:
+    # Step 1: Checkout the code
+    - name: Checkout code
+      uses: actions/checkout@v2  # Checks out the code from your GitHub repository
+
+    # Step 2: Set up Python
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'  # Set the Python version (you can change to any version you need)
+
+    # Step 3: Install dependencies
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip  # Upgrade pip
+        pip install -r requirements.txt  # Install the dependencies listed in requirements.txt
+
+    # Step 4: Run the fake profile detection scripts
+    - name: Run Insta script
+      run: |
+        python insta.py  # Run your Insta-related Python script (replace with the actual entry point)
+
+    - name: Run prediction module
+      run: |
+        python prediction_module.py  # Run the prediction module script
+
+    # Step 5: Run any additional Python scripts
+    - name: Run additional scripts
+      run: |
+        python testscarping.py  # Run any additional Python scripts you might need
+
+    # Step 6: Run tests (if applicable, you can set up tests later)
+    - name: Run tests
+      run: |
+        pytest  # Replace with the actual test command if you're using testing frameworks like pytest
+
+    # Optional Step 7: Deploy or Build your app
+    # If you want to deploy or run Docker, etc., you can add those steps here
+    # For example, a step to deploy using Docker or deploy static files
+
