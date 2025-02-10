@@ -1,0 +1,24 @@
+name: Deploy to AWS EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH into EC2 & Deploy
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd Detection-of-fake-profiles-on-socialmedia 
+            git pull origin main
+            docker build -t fake-profile-detection .
+            docker stop $(docker ps -q)
+            docker run -d -p 5000:5000 fake-profile-detection
+            sudo systemctl restart nginx
