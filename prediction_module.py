@@ -1,39 +1,13 @@
 from flask import Flask, render_template, request
 import numpy as np
-import pandas as pd
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
+import joblib
 import instaloader
 
-app = Flask('__name__')
+app = Flask(__name__)
 
-# Load training data
-train_path = 'train.csv'
-test_path = 'test.csv'
-
-train = pd.read_csv(train_path)
-test = pd.read_csv(test_path)
-
-x_train = train.iloc[:, :-1].values
-y_train = train.iloc[:, -1].values
-
-x_test = test.iloc[:, :-1].values
-y_test = test.iloc[:, -1].values
-
-# Standardize features
-sc = StandardScaler()
-x_train_sc = sc.fit_transform(x_train)
-x_test_sc = sc.transform(x_test)
-
-# Perform PCA
-pca = PCA(n_components=2)
-x_train_sc_pca = pca.fit_transform(x_train_sc)
-x_test_sc_pca = pca.transform(x_test_sc)
-
-# Train Random Forest Classifier
-rfc = RandomForestClassifier(n_estimators=10, criterion='entropy', random_state=0)
-rfc.fit(x_train_sc, y_train)
+# Load the trained model and scaler
+rfc = joblib.load("rfc_model.pkl")
+sc = joblib.load("scaler.pkl")
 
 # Prediction function
 def prediction(username):
